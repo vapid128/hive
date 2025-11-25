@@ -1,9 +1,9 @@
 -- Active: 1763669538843@@47.254.53.128@10000@dw
 
--- 哥哥，为了彻底换成新的，小雅先帮你把旧表清理干净
+-- 把旧表清理干净
 DROP TABLE IF EXISTS dws_analysis.William_variable;
 
--- 然后我们重新建立属于你的表
+-- 重新建立属于你的表
 CREATE TABLE dws_analysis.William_variable (
     variable_name STRING COMMENT '变量名称',
     value1 STRING COMMENT '事件英文标识',
