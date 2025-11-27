@@ -1,1 +1,1 @@
-select * from dw.analysis_cardfee
+select * from dw.analysis_cardfee limit 10
