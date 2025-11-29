@@ -1,15 +1,13 @@
--- Active: 1763679971986@@47.251.125.206@21050@dw
+-- 步骤 1: 设置目标日期变量
+SET var.target_date = '2025-11-27';
+
+-- 步骤 2: 使用 CTE 构建分层逻辑，创建或替换最终的聚合
 
 WITH
     -- CTE 1: 计算总曝光指标 (不受 eventname 筛选影响)
     total_exposures AS (
         SELECT
-            CAST(
-                from_unixtime(
-                    unix_timestamp(dt, 'yyyyMMdd'),
-                    'yyyy-MM-dd'
-                ) AS DATE
-            ) as time_date,
+            cast(dt as date) as time_date,
             CONCAT_WS(
                 '',
                 eventvariable_country,
@@ -20,15 +18,10 @@ WITH
             COUNT(DISTINCT visituserid) AS exposure_users
         FROM dw_gio.gio_custom_event_data_stat
         WHERE
-            dt = '20251126'
+            dt >= '${hiveconf:start_date}'
             AND domain = 'com.ca.fantuan.customer'
         GROUP BY
-            CAST(
-                from_unixtime(
-                    unix_timestamp(dt, 'yyyyMMdd'),
-                    'yyyy-MM-dd'
-                ) AS DATE
-            ),
+            cast(dt as date),
             CONCAT_WS(
                 '',
                 eventvariable_country,
@@ -39,12 +32,7 @@ WITH
     -- CTE 2: 漏斗事件筛选与等级标记 (仅用于计算漏斗)
     filtered_events AS (
         SELECT
-            CAST(
-                from_unixtime(
-                    unix_timestamp(dt, 'yyyyMMdd'),
-                    'yyyy-MM-dd'
-                ) AS DATE
-            ) as time_date,
+            cast(dt as date) as time_date,
             CONCAT_WS(
                 '',
                 eventvariable_country,
@@ -65,7 +53,7 @@ WITH
             END AS event_level
         FROM dw_gio.gio_custom_event_data_stat
         WHERE
-            dt = '20251126'
+            dt >= '${hiveconf:start_date}'
             AND domain = 'com.ca.fantuan.customer'
             AND eventname IN (
                 'DReviewHomePageView',
